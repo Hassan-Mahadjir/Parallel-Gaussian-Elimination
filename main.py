@@ -2,9 +2,8 @@ from mpi4py import MPI
 import numpy as np
 import sys
 
-# ----------------------------------
+
 # MPI ENVIRONMENT - create communicator
-# ----------------------------------
 class MPIEnvironment:
     def __init__(self):
         self.comm = MPI.COMM_WORLD
@@ -12,9 +11,8 @@ class MPIEnvironment:
         self.p = self.comm.Get_size()
 
 
-# ----------------------------------
+
 # PARALLEL GAUSSIAN ELIMINATION
-# ----------------------------------
 class ParallelGaussianElimination:
     def __init__(self, mpi_env):
         self.comm = mpi_env.comm
@@ -30,9 +28,7 @@ class ParallelGaussianElimination:
         self.backward_time = 0.0
         self.total_time = 0.0
 
-    # ----------------------------------
     # MATRIX INITIALIZATION
-    # ----------------------------------
     def initialize_matrix(self):
         try:
             if self.rank == 0:
@@ -77,9 +73,8 @@ class ParallelGaussianElimination:
                 print("ERROR:", e)
             self.comm.Abort(1)
         
-    # ----------------------------------
+
     # PARALLEL FORWARD ELIMINATION
-    # ----------------------------------
     def parallel_forward_elimination(self):
         start_time = MPI.Wtime()
 
@@ -102,9 +97,8 @@ class ParallelGaussianElimination:
         end_time = MPI.Wtime()
         self.forward_time = end_time - start_time
 
-    # ----------------------------------
+
     # PARALLEL BACK SUBSTITUTION
-    # ----------------------------------
     def parallel_back_substitution(self):
         start_time = MPI.Wtime()
 
@@ -132,9 +126,7 @@ class ParallelGaussianElimination:
         end_time = MPI.Wtime()
         self.backward_time = end_time - start_time
 
-    # ----------------------------------
     # PERFORMANCE REPORT
-    # ----------------------------------
     def report_performance(self):
         self.total_time = self.forward_time + self.backward_time
 
@@ -148,11 +140,9 @@ class ParallelGaussianElimination:
             print(f"Number of processes (p): {self.p}")
             print(f"Forward elimination time: {max_forward:.6f} s")
             print(f"Back substitution time: {max_backward:.6f} s")
-            print(f"Total execution time T_p: {max_total:.6f} s")
+            print(f"Total execution time (Tp): {max_total:.6f} s")
 
-    # ----------------------------------
     # DISPLAY RESULTS
-    # ----------------------------------
     def display_results(self):
         if self.rank == 0:
             print("\nOriginal augmented matrix [A | b]:")
@@ -165,9 +155,7 @@ class ParallelGaussianElimination:
             print(self.x)
 
 
-# ----------------------------------
 # MAIN PROGRAM
-# ----------------------------------
 def main():
     mpi_env = MPIEnvironment()
     solver = ParallelGaussianElimination(mpi_env)
@@ -186,7 +174,7 @@ def main():
     solver.display_results()
 
     if mpi_env.rank == 0:
-        print(f"\nOverall wall-clock time: {global_end - global_start:.6f} s")
+        print(f"\nOverall execution time (T1): {global_end - global_start:.6f} s")
 
 
 if __name__ == "__main__":
